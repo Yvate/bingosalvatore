@@ -182,11 +182,9 @@ async function aprobar(cedula, id, nombre) {
   const btn = document.getElementById('b-'+id);
   btn.disabled = true; btn.textContent = '...';
   try {
-    const r = await fetch(CFG.WEBHOOK, {
-      method:'POST', mode:'cors',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({accion:'aprobarComprobante', cedula})
-    });
+    // Usamos GET para evitar bloqueo CORS en POST desde GitHub Pages
+    const url = CFG.WEBHOOK + '?accion=aprobarComprobante&cedula=' + encodeURIComponent(cedula);
+    const r = await fetch(url);
     const d = await r.json();
     if (d.exito) {
       const card = document.getElementById('c-'+id);
