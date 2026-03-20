@@ -59,6 +59,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-
 .ca{display:flex;gap:.5rem;align-items:center;flex-shrink:0;}
 .bver{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);background:none;border:1px solid var(--border);padding:.4rem .7rem;cursor:pointer;font-family:'DM Mono',monospace;text-decoration:none;transition:all .2s;}
 .bver:hover{border-color:var(--text);color:var(--text);}
+.brec{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#ef4444;background:none;border:1px solid rgba(239,68,68,.4);padding:.4rem .7rem;cursor:pointer;font-family:'DM Mono',monospace;transition:all .2s;white-space:nowrap;}
+.brec:hover{background:rgba(239,68,68,.1);}
+.brec:disabled{opacity:.5;cursor:not-allowed;}
+.tag-estado{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;padding:.28rem .6rem;border:1px solid;border-radius:2px;}
+.leyenda{display:flex;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.ley-item{display:flex;align-items:center;gap:6px;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.ley-dot{width:10px;height:10px;border-radius:50%;}
+.tabs{display:flex;gap:1px;background:var(--border);margin-bottom:1rem;}
+.tab{flex:1;padding:.6rem .5rem;font-family:'DM Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;background:var(--surface);color:var(--muted);border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tab:hover{color:var(--text);}
+.tab.active.pend{background:var(--surface);color:var(--gold);border-bottom:2px solid var(--gold);}
+.tab.active.apro{background:var(--surface);color:var(--success);border-bottom:2px solid var(--success);}
+.tab.active.rech{background:var(--surface);color:#ef4444;border-bottom:2px solid #ef4444;}
+.tab-badge{font-size:.6rem;padding:1px 6px;border-radius:10px;font-weight:500;}
+.tab.active.pend .tab-badge{background:rgba(245,197,0,.15);color:var(--gold);}
+.tab.active.apro .tab-badge{background:rgba(34,197,94,.15);color:var(--success);}
+.tab.active.rech .tab-badge{background:rgba(239,68,68,.15);color:#ef4444;}
+.tab:not(.active) .tab-badge{background:var(--border);color:var(--muted);}
 .bapr{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;color:#fff;background:var(--red);border:none;border-bottom:2px solid var(--red-dark);padding:.4rem 1rem;cursor:pointer;transition:background .15s;white-space:nowrap;}
 .bapr:hover{background:var(--red-dark);}
 .bapr:disabled{background:var(--muted);border-bottom-color:#333;cursor:not-allowed;}
@@ -103,8 +121,19 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-
     <div class="stat"><div class="sn g" id="sa">—</div><div class="sl">Aprobados hoy</div></div>
     <div class="stat"><div class="sn" id="sc">—</div><div class="sl">Cartones vendidos</div></div>
   </div>
+  <div class="tabs">
+    <button class="tab active pend" id="tab-pend" onclick="cambiarTab('Pendiente')">
+      Pendientes <span class="tab-badge" id="badge-pend">0</span>
+    </button>
+    <button class="tab apro" id="tab-apro" onclick="cambiarTab('Aprobado')">
+      Aprobados <span class="tab-badge" id="badge-apro">0</span>
+    </button>
+    <button class="tab rech" id="tab-rech" onclick="cambiarTab('Rechazado')">
+      Rechazados <span class="tab-badge" id="badge-rech">0</span>
+    </button>
+  </div>
   <div class="ctrl">
-    <div class="slabel">Comprobantes pendientes</div>
+    <div class="slabel" id="tab-label">Pendientes de hoy</div>
     <button class="btn-ref" onclick="cargar()">↻ Actualizar</button>
   </div>
   <div id="lista"><div class="empty"><div class="ei">...</div><p>Cargando</p></div></div>
@@ -148,20 +177,61 @@ async function cargar() {
   }
 }
 
+let _todosData = [];
+let _tabActiva = 'Pendiente';
+
+function cambiarTab(estado) {
+  _tabActiva = estado;
+  // Actualizar estilos de pestañas
+  ['pend','apro','rech'].forEach(t => document.getElementById('tab-'+t).classList.remove('active'));
+  const mapa = {'Pendiente':'pend','Aprobado':'apro','Rechazado':'rech'};
+  const labels = {'Pendiente':'Pendientes de hoy','Aprobado':'Aprobados de hoy','Rechazado':'Rechazados de hoy'};
+  document.getElementById('tab-'+mapa[estado]).classList.add('active');
+  document.getElementById('tab-label').textContent = labels[estado];
+  renderLista(_todosData);
+}
+
 function render(data) {
-  const pend = data.filter(c => c.estado === 'Pendiente');
-  const apr  = data.filter(c => c.estado === 'Aprobado');
+  _todosData = data;
+  const pend  = data.filter(c => c.estado === 'Pendiente');
+  const apr   = data.filter(c => c.estado === 'Aprobado');
+  const rec   = data.filter(c => c.estado === 'Rechazado');
   const carts = apr.reduce((s,c) => s + (parseInt(c.cantidad)||1), 0);
+
+  // Stats
   document.getElementById('sp').textContent = pend.length;
   document.getElementById('sa').textContent = apr.length;
   document.getElementById('sc').textContent = carts;
+
+  // Badges en pestañas
+  document.getElementById('badge-pend').textContent = pend.length;
+  document.getElementById('badge-apro').textContent = apr.length;
+  document.getElementById('badge-rech').textContent = rec.length;
+
+  renderLista(data);
+}
+
+function renderLista(data) {
+  const filtrado = data.filter(c => c.estado === _tabActiva);
   const lista = document.getElementById('lista');
-  if (!pend.length) {
-    lista.innerHTML = '<div class="empty"><div class="ei">OK</div><p>Todo al día — sin pendientes</p></div>';
+  const borde = _tabActiva === 'Aprobado' ? 'var(--success)' : _tabActiva === 'Rechazado' ? '#ef4444' : 'var(--gold)';
+  const etiquetas = {'Pendiente':'','Aprobado':'✓ Aprobado','Rechazado':'✗ Rechazado'};
+
+  if (!filtrado.length) {
+    const msgs = {'Pendiente':'Todo al día — sin pendientes','Aprobado':'Sin aprobados aún','Rechazado':'Sin rechazados'};
+    lista.innerHTML = `<div class="empty"><div class="ei">OK</div><p>${msgs[_tabActiva]}</p></div>`;
     return;
   }
-  lista.innerHTML = pend.map(c => `
-    <div class="card" id="c-${c.id}">
+
+  lista.innerHTML = filtrado.map(c => {
+    const esPend = c.estado === 'Pendiente';
+    const acciones = esPend
+      ? `<a class="bver" href="${c.urlComprobante}" target="_blank">Ver</a>
+         <button class="brec" id="r-${c.id}" onclick="rechazar('${c.cedula}','${c.id}','${c.nombre}')">Rechazar</button>
+         <button class="bapr" id="b-${c.id}" onclick="aprobar('${c.cedula}','${c.id}','${c.nombre}')">Aprobar</button>`
+      : `<a class="bver" href="${c.urlComprobante}" target="_blank">Ver</a>
+         <span class="tag-estado" style="border-color:${borde};color:${borde}">${etiquetas[c.estado]}</span>`;
+    return `<div class="card" id="c-${c.id}" style="border-left:2px solid ${borde}">
       <div>
         <div class="cn">${c.nombre||'Sin nombre'}</div>
         <div class="cm">
@@ -171,11 +241,9 @@ function render(data) {
           <span>${c.telefono||''}</span>
         </div>
       </div>
-      <div class="ca">
-        <a class="bver" href="${c.urlComprobante}" target="_blank">Ver</a>
-        <button class="bapr" id="b-${c.id}" onclick="aprobar('${c.cedula}','${c.id}','${c.nombre}')">Aprobar</button>
-      </div>
-    </div>`).join('');
+      <div class="ca">${acciones}</div>
+    </div>`;
+  }).join('');
 }
 
 async function aprobar(cedula, id, nombre) {
@@ -194,6 +262,23 @@ async function aprobar(cedula, id, nombre) {
       setTimeout(cargar, 1800);
     } else { btn.disabled=false; btn.textContent='Aprobar'; toast(d.error||'Error',true); }
   } catch(e) { btn.disabled=false; btn.textContent='Aprobar'; toast('Error de conexión',true); }
+}
+
+async function rechazar(cedula, id, nombre) {
+  const btn = document.getElementById('r-'+id);
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const url = CFG.WEBHOOK + '?accion=rechazarComprobante&cedula=' + encodeURIComponent(cedula);
+    const r = await fetch(url);
+    const d = await r.json();
+    if (d.exito) {
+      const card = document.getElementById('c-'+id);
+      card.style.opacity = '0.4';
+      card.querySelector('.ca').innerHTML = '<span style="font-size:.62rem;color:#ef4444;border:1px solid rgba(239,68,68,.4);padding:.28rem .6rem;">✗ Rechazado</span>';
+      toast('Comprobante rechazado — se avisó a ' + nombre, true);
+      setTimeout(cargar, 1800);
+    } else { btn.disabled=false; btn.textContent='Rechazar'; toast(d.error||'Error',true); }
+  } catch(e) { btn.disabled=false; btn.textContent='Rechazar'; toast('Error de conexión',true); }
 }
 
 function fh(f) {
