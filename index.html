@@ -62,7 +62,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-
 .conv-actions{display:flex;gap:.4rem;align-items:center;flex-shrink:0;}
 .conv-empty{text-align:center;padding:2rem;color:var(--muted);font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;}
 
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:1.75rem;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:1.75rem;}
 .stat{background:var(--surface);padding:1rem 1.3rem;}
 .sn{font-family:'Bebas Neue',sans-serif;font-size:2.3rem;line-height:1;}
 .sn.w{color:var(--gold);}
@@ -166,7 +166,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-
   <div class="stats">
     <div class="stat"><div class="sn w" id="sp">—</div><div class="sl">Pendientes</div></div>
     <div class="stat"><div class="sn g" id="sa">—</div><div class="sl">Aprobados hoy</div></div>
-    <div class="stat"><div class="sn" id="sc">—</div><div class="sl">Cartones vendidos</div></div>
+    <div class="stat"><div class="sn" id="sc">—</div><div class="sl">Vendidos hoy</div></div>
+    <div class="stat"><div class="sn" id="ss" style="color:var(--gold)">—</div><div class="sl">Stock disponible</div></div>
   </div>
   <div class="premios-section">
     <div class="premios-header">
@@ -217,10 +218,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-
         <span class="emg-icon">📊</span>
         <span>Reporte cartones</span>
       </button>
-      <button class="btn-emg" id="btn-masivo" onclick="abrirEnvioMasivo()">
-        <span class="emg-icon">📢</span>
-        <span>Envío masivo 20hs</span>
-      </button>
     </div>
   </div>
 
@@ -235,30 +232,29 @@ body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-
     </div>
   </div>
 
-  <!-- MODAL ENVÍO MASIVO -->
-  <div id="modal-masivo" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;">
-    <div style="background:var(--surface);border:1px solid var(--border);max-width:500px;width:90%;padding:1.5rem;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;">Envío Masivo</span>
-        <button class="btn-out" onclick="cerrarModal('modal-masivo')">✕</button>
-      </div>
-      <div class="field">
-        <label>Mensaje a enviar</label>
-        <input type="text" id="mensaje-masivo" value="¡El sorteo está comenzando! Seguilo en vivo ahora 🎉" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:.8rem;padding:.6rem;">
-      </div>
-      <div id="masivo-preview" style="font-size:.7rem;color:var(--muted);margin-bottom:1rem;"></div>
-      <button class="bapr" id="btn-enviar-masivo" onclick="enviarMasivo()" style="width:100%;">Enviar a todos los compradores de hoy</button>
-    </div>
-  </div>
-
   <!-- SECCIÓN CONVERSACIONES -->
   <div class="conv-section">
     <div class="conv-header">
-      <div class="conv-title">💬 Conversaciones activas (48hs)</div>
-      <button class="btn-ref" onclick="cargarConversaciones()">↻ Actualizar</button>
+      <div class="conv-title">💬 Conversaciones (48hs)</div>
+      <div style="display:flex;gap:1px;background:var(--border);">
+        <button class="tab active pend" id="ctab-ia" onclick="cambiarConvTab('ia')" style="flex:none;padding:.4rem .8rem;font-size:.6rem;">Salva IA</button>
+        <button class="tab" id="ctab-humano" onclick="cambiarConvTab('humano')" style="flex:none;padding:.4rem .8rem;font-size:.6rem;">Modo Humano</button>
+      </div>
+      <button class="btn-ref" onclick="cargarConversaciones()">↻</button>
+    </div>
+    <div style="margin-bottom:6px;">
+      <input type="text" id="conv-search" placeholder="🔍 Buscar por nombre, teléfono o etapa..." oninput="filtrarConversaciones()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:.72rem;padding:.45rem .7rem;outline:none;">
     </div>
     <div id="conv-list" class="conv-list">
       <div class="conv-empty">Cargando...</div>
+    </div>
+    <!-- Chat UI para Modo Humano -->
+    <div id="chat-humano" style="display:none;margin-top:6px;">
+      <div id="chat-target" style="font-size:.62rem;color:var(--gold);margin-bottom:4px;"></div>
+      <div style="display:flex;gap:4px;">
+        <input type="text" id="chat-input" placeholder="Escribí un mensaje..." style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:.75rem;padding:.5rem .7rem;outline:none;" onkeydown="if(event.key==='Enter')enviarChat()">
+        <button class="bapr" onclick="enviarChat()" style="padding:.5rem .8rem;font-size:.8rem;">➤</button>
+      </div>
     </div>
   </div>
 
@@ -317,6 +313,22 @@ async function cargar() {
     document.getElementById('lista').innerHTML = '<div class="empty"><div class="ei">!</div><p>Sin conexión</p></div>';
   }
   cargarConversaciones();
+  cargarStock();
+}
+
+async function cargarStock() {
+  try {
+    const r = await fetch(CFG.WEBHOOK + '?accion=reporteCartones');
+    const d = await r.json();
+    if (d.exito) {
+      document.getElementById('ss').textContent = d.resumen.totalDisponibles;
+      // Cambiar color si el stock es bajo
+      const ssEl = document.getElementById('ss');
+      if (d.resumen.totalDisponibles <= 5) ssEl.style.color = 'var(--danger)';
+      else if (d.resumen.totalDisponibles <= 15) ssEl.style.color = '#f59e0b';
+      else ssEl.style.color = 'var(--gold)';
+    }
+  } catch(e) {}
 }
 
 let _todosData = [];
@@ -380,7 +392,22 @@ function render(data) {
   const pend  = data.filter(c => c.estado === 'Pendiente');
   const apr   = data.filter(c => c.estado === 'Aprobado');
   const rec   = data.filter(c => c.estado === 'Rechazado');
-  const carts = apr.reduce((s,c) => s + (parseInt(c.cantidad)||1), 0);
+
+  // Calcular hora Paraguay para reset de vendidos después de las 20:00
+  const ahoraPY = new Date(new Date().toLocaleString("en-US", {timeZone: "America/Asuncion"}));
+  const horaPY = ahoraPY.getHours();
+  const minPY = ahoraPY.getMinutes();
+  const despues20 = (horaPY > 20 || (horaPY === 20 && minPY >= 5));
+  
+  // Solo contar aprobados de HOY (y si pasaron las 20:05, mostrar 0 porque ya cerró el sorteo)
+  let carts = 0;
+  if (!despues20) {
+    const hoyStr = ahoraPY.toISOString().substring(0, 10);
+    const aprHoy = apr.filter(c => {
+      try { return new Date(c.fecha).toISOString().substring(0, 10) === hoyStr; } catch(e) { return false; }
+    });
+    carts = aprHoy.reduce((s,c) => s + (parseInt(c.cantidad)||1), 0);
+  }
 
   // SONIDO: si hay nuevos pendientes que antes no estaban
   if (_prevPendCount >= 0 && pend.length > _prevPendCount) {
@@ -442,36 +469,6 @@ function cerrarModal(id) {
   document.getElementById(id).style.display = 'none';
 }
 
-// ====== ENVÍO MASIVO (feedback punto 5) ======
-async function abrirEnvioMasivo() {
-  document.getElementById('modal-masivo').style.display = 'flex';
-  document.getElementById('masivo-preview').innerHTML = 'Cargando compradores del día...';
-  try {
-    const r = await fetch(CFG.WEBHOOK + '?accion=compradoresDelDia');
-    const d = await r.json();
-    if (d.exito) {
-      document.getElementById('masivo-preview').innerHTML = '📋 ' + d.total + ' compradores confirmados hoy. El mensaje se enviará a cada uno.';
-    }
-  } catch(e) { document.getElementById('masivo-preview').innerHTML = 'Error al cargar compradores.'; }
-}
-
-async function enviarMasivo() {
-  const btn = document.getElementById('btn-enviar-masivo');
-  const msg = document.getElementById('mensaje-masivo').value.trim();
-  if (!msg) { toast('Escribí un mensaje', true); return; }
-  if (!confirm('¿Enviar mensaje a TODOS los compradores de hoy?')) return;
-  btn.disabled = true; btn.textContent = 'Enviando...';
-  try {
-    const r = await fetch(CFG.WEBHOOK + '?accion=envioMasivo&mensaje=' + encodeURIComponent(msg));
-    const d = await r.json();
-    if (d.exito) {
-      toast(d.mensaje);
-      cerrarModal('modal-masivo');
-    } else { toast(d.error || 'Error', true); }
-  } catch(e) { toast('Error de conexión', true); }
-  btn.disabled = false; btn.textContent = 'Enviar a todos los compradores de hoy';
-}
-
 function renderLista(data) {
   const filtrado = data.filter(c => c.estado === _tabActiva);
   const lista = document.getElementById('lista');
@@ -486,6 +483,9 @@ function renderLista(data) {
 
   lista.innerHTML = filtrado.map(c => {
     const esPend = c.estado === 'Pendiente';
+    const cantEdit = esPend
+      ? `<input type="number" class="cant-edit" id="cant-${c.id}" value="${c.cantidad||1}" min="1" max="100" style="width:44px;background:var(--bg);border:1px solid var(--border);color:var(--gold);font-family:'DM Mono',monospace;font-size:.68rem;padding:2px 4px;text-align:center;" onchange="modificarCantidad('${c.id}',this.value)">`
+      : `<span class="cq">${c.cantidad||1}</span>`;
     const acciones = esPend
       ? `<a class="bver" href="${c.urlComprobante}" target="_blank">Ver</a>
          <button class="brec" id="r-${c.id}" onclick="rechazar('${c.cedula}','${c.id}','${c.nombre}')">Rechazar</button>
@@ -497,7 +497,7 @@ function renderLista(data) {
         <div class="cn">${c.nombre||'Sin nombre'}</div>
         <div class="cm">
           <span>CI ${c.cedula}</span>
-          <span class="cq">${c.cantidad||1} cartón${(c.cantidad>1)?'es':''}</span>
+          ${cantEdit} cartón${(c.cantidad>1)?'es':''}
           <span>${fh(c.fecha)}</span>
           <span>${c.telefono||''}</span>
         </div>
@@ -649,24 +649,47 @@ async function toggleBotGlobal() {
 async function toggleBotCliente(telefono, btnEl) {
   const estaPausado = btnEl.classList.contains('paused');
   const accion = estaPausado ? 'reanudarBot' : 'pausarBot';
-  const textoOrig = btnEl.textContent;
   btnEl.textContent = '⏳';
   try {
     const r = await fetch(CFG.WEBHOOK + '?accion=' + accion + '&telefono=' + encodeURIComponent(telefono));
     const d = await r.json();
-    if (d.exito) {
-      toast(d.mensaje);
-      cargarConversaciones(); // Refrescar la lista
-    } else { toast(d.error || 'Error', true); btnEl.textContent = textoOrig; }
-  } catch(e) { toast('Error', true); btnEl.textContent = textoOrig; }
+    if (d.exito) { toast(d.mensaje); cargarConversaciones(); }
+    else { toast(d.error || 'Error', true); }
+  } catch(e) { toast('Error', true); }
 }
 
-// ====== SECCIÓN CONVERSACIONES ======
+// ====== MODIFICAR CANTIDAD EN COMPROBANTE ======
+async function modificarCantidad(id, nuevaCant) {
+  try {
+    const r = await fetch(CFG.WEBHOOK + '?accion=modificarCantidad&id=' + encodeURIComponent(id) + '&cantidad=' + encodeURIComponent(nuevaCant));
+    const d = await r.json();
+    if (d.exito) toast(d.mensaje);
+    else toast(d.error || 'Error', true);
+  } catch(e) { toast('Error', true); }
+}
+
+// ====== CONVERSACIONES: Tabs + Chat + Acciones ======
+let _convTab = 'ia';
+let _allConvs = [];
+let _chatTelefono = '';
+
+function cambiarConvTab(tab) {
+  _convTab = tab;
+  document.getElementById('ctab-ia').className = tab === 'ia' ? 'tab active pend' : 'tab';
+  document.getElementById('ctab-humano').className = tab === 'humano' ? 'tab active rech' : 'tab';
+  document.getElementById('chat-humano').style.display = tab === 'humano' ? 'block' : 'none';
+  renderConversaciones(_allConvs);
+}
+
+function filtrarConversaciones() {
+  renderConversaciones(_allConvs);
+}
+
 async function cargarConversaciones() {
   try {
     const r = await fetch(CFG.WEBHOOK + '?accion=listarConversaciones');
     const d = await r.json();
-    if (d.exito) renderConversaciones(d.conversaciones);
+    if (d.exito) { _allConvs = d.conversaciones; renderConversaciones(d.conversaciones); }
   } catch(e) {
     document.getElementById('conv-list').innerHTML = '<div class="conv-empty">Sin conexión</div>';
   }
@@ -674,30 +697,55 @@ async function cargarConversaciones() {
 
 function renderConversaciones(convs) {
   const lista = document.getElementById('conv-list');
-  if (!convs || !convs.length) {
-    lista.innerHTML = '<div class="conv-empty">Sin conversaciones recientes</div>';
+  if (!convs || !convs.length) { lista.innerHTML = '<div class="conv-empty">Sin conversaciones</div>'; return; }
+
+  // Filtrar por tab
+  let filtradas = _convTab === 'humano'
+    ? convs.filter(c => !c.botActivo)
+    : convs.filter(c => c.botActivo);
+
+  // Filtrar por búsqueda
+  const busqueda = (document.getElementById('conv-search')?.value || '').toLowerCase().trim();
+  if (busqueda) {
+    filtradas = filtradas.filter(c => 
+      (c.nombre || '').toLowerCase().includes(busqueda) ||
+      (c.telefono || '').includes(busqueda) ||
+      (c.etapa || '').toLowerCase().includes(busqueda) ||
+      (c.ultimoMensaje || '').toLowerCase().includes(busqueda)
+    );
+  }
+
+  if (!filtradas.length) {
+    lista.innerHTML = `<div class="conv-empty">${_convTab === 'humano' ? 'Ningún cliente en modo humano' : 'Todas las conversaciones activas con IA'}</div>`;
     return;
   }
-  
+
   const etapaLabels = {
-    'inicial': ['Nuevo', 'init'],
-    'esperando_cedula': ['Pide cédula', 'wait'],
-    'esperando_nombre': ['Pide nombre', 'wait'],
-    'informacion_enviada': ['Info enviada', 'wait'],
-    'persuadiendo': ['Persuadiendo', 'wait'],
-    'esperando_cantidad': ['Elige cantidad', 'wait'],
-    'esperando_metodo_pago': ['Elige pago', 'wait'],
-    'esperando_comprobante': ['Espera comprobante', 'wait'],
-    'verificando_pago': ['Verificando pago', 'wait'],
-    'carton_entregado': ['Entregado ✓', 'ok']
+    'inicial':['Nuevo','init'],'esperando_cedula':['Pide cédula','wait'],
+    'esperando_nombre':['Pide nombre','wait'],'informacion_enviada':['Info enviada','wait'],
+    'persuadiendo':['Persuadiendo','wait'],'esperando_cantidad':['Elige cantidad','wait'],
+    'esperando_metodo_pago':['Elige pago','wait'],'esperando_comprobante':['Espera comprobante','wait'],
+    'verificando_pago':['Verificando','wait'],'carton_entregado':['Entregado ✓','ok']
   };
-  
-  lista.innerHTML = convs.map(c => {
+
+  lista.innerHTML = filtradas.map(c => {
     const [label, cls] = etapaLabels[c.etapa] || [c.etapa, 'init'];
     const botOff = !c.botActivo;
-    const hora = new Date(c.fecha).toLocaleTimeString('es-PY', {hour:'2-digit', minute:'2-digit'});
-    const dia = new Date(c.fecha).toLocaleDateString('es-PY', {day:'2-digit', month:'2-digit'});
-    
+    const hora = new Date(c.fecha).toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'});
+    const dia = new Date(c.fecha).toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit'});
+
+    const btnBot = botOff
+      ? `<button class="btn-bot-ind paused" onclick="toggleBotCliente('${c.telefono}',this)">▶️ Activar</button>`
+      : `<button class="btn-bot-ind" onclick="toggleBotCliente('${c.telefono}',this)">⏸️ Pausar</button>`;
+
+    const btnAcciones = `
+      <button class="btn-bot-ind" onclick="enviarCombos('${c.telefono}')" title="Enviar combos">🎟️ Combos</button>
+      <button class="btn-bot-ind" onclick="asignarCartones('${c.telefono}')" title="Asignar cartones">📌 Asignar</button>`;
+
+    const btnChat = botOff
+      ? `<button class="btn-bot-ind" onclick="abrirChat('${c.telefono}','${(c.nombre||'').replace(/'/g,'')}')" title="Chatear">💬</button>`
+      : '';
+
     return `<div class="conv-row ${botOff ? 'bot-off' : ''}">
       <div class="conv-info">
         <div class="conv-name">${c.nombre || 'Sin nombre'}</div>
@@ -709,14 +757,56 @@ function renderConversaciones(convs) {
         ${c.ultimoMensaje ? `<div class="conv-msg">"${c.ultimoMensaje}"</div>` : ''}
       </div>
       <div class="conv-actions">
-        <button class="btn-bot-ind ${botOff ? 'paused' : ''}" 
-                onclick="toggleBotCliente('${c.telefono}',this)" 
-                title="${botOff ? 'Reactivar bot' : 'Pausar bot — atender manualmente'}">
-          ${botOff ? '▶️ Activar' : '⏸️ Pausar'}
-        </button>
+        ${btnAcciones}
+        ${btnChat}
+        ${btnBot}
       </div>
     </div>`;
   }).join('');
+}
+
+// ====== CHAT HUMANO ======
+function abrirChat(telefono, nombre) {
+  _chatTelefono = telefono;
+  document.getElementById('chat-target').textContent = '💬 Chateando con: ' + (nombre || telefono);
+  document.getElementById('chat-input').value = '';
+  document.getElementById('chat-input').focus();
+}
+
+async function enviarChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg || !_chatTelefono) return;
+  input.value = ''; input.disabled = true;
+  try {
+    const r = await fetch(CFG.WEBHOOK + '?accion=enviarMensajeHumano&telefono=' + encodeURIComponent(_chatTelefono) + '&mensaje=' + encodeURIComponent(msg));
+    const d = await r.json();
+    if (d.exito) toast('Mensaje enviado ✓');
+    else toast(d.error || 'Error', true);
+  } catch(e) { toast('Error de conexión', true); }
+  input.disabled = false; input.focus();
+}
+
+// ====== ACCIONES RÁPIDAS ======
+async function enviarCombos(telefono) {
+  if (!confirm('¿Enviar combos a este cliente?')) return;
+  try {
+    const r = await fetch(CFG.WEBHOOK + '?accion=enviarCombos&telefono=' + encodeURIComponent(telefono));
+    const d = await r.json();
+    if (d.exito) { toast(d.mensaje); cargarConversaciones(); }
+    else toast(d.error || 'Error', true);
+  } catch(e) { toast('Error', true); }
+}
+
+async function asignarCartones(telefono) {
+  const cant = prompt('¿Cuántos cartones asignar?', '1');
+  if (!cant) return;
+  try {
+    const r = await fetch(CFG.WEBHOOK + '?accion=asignarCartones&telefono=' + encodeURIComponent(telefono) + '&cantidad=' + encodeURIComponent(cant));
+    const d = await r.json();
+    if (d.exito) { toast(d.mensaje); cargarConversaciones(); }
+    else toast(d.error || 'Error', true);
+  } catch(e) { toast('Error', true); }
 }
 
 function fh(f) {
