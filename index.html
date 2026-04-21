@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Salvatore · Panel de Control</title>
+<title>Salvatore · Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Bebas+Neue&display=swap');
 :root{--bg:#f5f5f0;--surface:#fff;--surface-alt:#fafaf7;--border:#e8e8e0;--border-lt:#f0f0ea;--red:#D41B1B;--red-dk:#a01414;--red-lt:#fef2f2;--gold:#c9a000;--gold-lt:#fefce8;--txt:#1a1a1a;--txt2:#6b6b60;--muted:#9b9b90;--ok:#16a34a;--ok-lt:#f0fdf4;--danger:#dc2626;--danger-lt:#fef2f2;--warn:#d97706;--warn-lt:#fffbeb;--sh-sm:0 1px 2px rgba(0,0,0,.04);--sh-md:0 4px 12px rgba(0,0,0,.06);--sh-lg:0 8px 24px rgba(0,0,0,.08);--r:14px;--rs:10px}
@@ -199,48 +199,42 @@ body{background:var(--bg);color:var(--txt);font-family:'Plus Jakarta Sans',sans-
     </div>
 
     <div id="section-kommo" style="display:none">
-  <!-- Estadísticas Kommo -->
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-label">Pendientes <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2)">Kommo</span></div><div class="stat-value" id="k-pend">—</div></div>
-    <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-label">Aprobados <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2)">Kommo</span></div><div class="stat-value" id="k-apr">—</div></div>
-    <div class="stat-card"><div class="stat-icon red">🎟️</div><div class="stat-label">Cartones vendidos <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2)">Kommo</span></div><div class="stat-value" id="k-carts">—</div></div>
-    <div class="stat-card"><div class="stat-icon gold">💰</div><div class="stat-label">Ingresos <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2)">Kommo</span></div><div class="stat-value money" id="k-ing">—</div></div>
-    <div class="stat-card"><div class="stat-icon blue">📦</div><div class="stat-label">Stock Kommo</div><div class="stat-value" id="k-stock">—</div><div class="stat-sub" id="k-stock-sub"></div></div>
-  </div>
-
-  <!-- Comprobantes Kommo -->
-  <div class="panel panel-full" style="margin-bottom:1.5rem">
-    <div class="panel-header"><div class="panel-title">📋 Comprobantes Kommo</div><button class="topbar-btn" onclick="cargarKommo()">↻ Actualizar</button></div>
-    <div class="panel-body">
-      <div class="tabs-row">
-        <button class="tab-btn active" id="ktab-pend" onclick="cambiarTabKommo('Pendiente')">Pendientes <span class="badge" id="kbadge-pend">0</span></button>
-        <button class="tab-btn" id="ktab-apro" onclick="cambiarTabKommo('Aprobado')">Aprobados <span class="badge" id="kbadge-apro">0</span></button>
-        <button class="tab-btn" id="ktab-rech" onclick="cambiarTabKommo('Rechazado')">Rechazados <span class="badge" id="kbadge-rech">0</span></button>
-        <button class="btn-emg" onclick="verReporteCartonesKommo()" style="margin-left:auto">📊 Reporte</button>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-label">Pendientes <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2)">Kommo</span></div><div class="stat-value" id="k-pend">—</div></div>
+        <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-label">Aprobados <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2)">Kommo</span></div><div class="stat-value" id="k-apr">—</div></div>
+        <div class="stat-card"><div class="stat-icon red">🎟️</div><div class="stat-label">Cartones vendidos <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2)">Kommo</span></div><div class="stat-value" id="k-carts">—</div></div>
+        <div class="stat-card"><div class="stat-icon gold">💰</div><div class="stat-label">Ingresos <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2)">Kommo</span></div><div class="stat-value money" id="k-ing">—</div></div>
+        <div class="stat-card"><div class="stat-icon blue">📦</div><div class="stat-label">Stock Kommo</div><div class="stat-value" id="k-stock">—</div><div class="stat-sub" id="k-stock-sub"></div></div>
       </div>
-      <div class="card-list" id="k-lista"><div class="empty-state"><div class="big">···</div><p>Cargando</p></div></div>
-    </div>
-  </div>
-
-  <!-- Acciones Kommo -->
-  <div class="panel panel-full">
-    <div class="panel-header"><div class="panel-title">⚡ Acciones Kommo</div></div>
-    <div class="panel-body">
-      <div class="emg-grid">
-        <button class="btn-emg" id="k-btn-cargar" onclick="kommoEmergencia('cargarCartones')">📥 Cargar cartones</button>
-        <button class="btn-emg" id="k-btn-limpiar" onclick="kommoEmergencia('limpiarYCargar')">🔄 Limpiar y recargar</button>
+      <div class="panel panel-full" style="margin-bottom:1.5rem">
+        <div class="panel-header"><div class="panel-title">📋 Comprobantes Kommo</div><button class="topbar-btn" onclick="cargarKommo()">↻ Actualizar</button></div>
+        <div class="panel-body">
+          <div class="tabs-row">
+            <button class="tab-btn active" id="ktab-pend" onclick="cambiarTabKommo('Pendiente')">Pendientes <span class="badge" id="kbadge-pend">0</span></button>
+            <button class="tab-btn" id="ktab-apro" onclick="cambiarTabKommo('Aprobado')">Aprobados <span class="badge" id="kbadge-apro">0</span></button>
+            <button class="tab-btn" id="ktab-rech" onclick="cambiarTabKommo('Rechazado')">Rechazados <span class="badge" id="kbadge-rech">0</span></button>
+            <button class="btn-emg" onclick="verReporteCartonesKommo()" style="margin-left:auto">📊 Reporte</button>
+          </div>
+          <div class="card-list" id="k-lista"><div class="empty-state"><div class="big">···</div><p>Cargando</p></div></div>
+        </div>
+      </div>
+      <div class="panel panel-full">
+        <div class="panel-header"><div class="panel-title">⚡ Acciones Kommo</div></div>
+        <div class="panel-body">
+          <div class="emg-grid">
+            <button class="btn-emg" id="k-btn-cargar" onclick="kommoEmergencia('cargarCartones')">📥 Cargar cartones</button>
+            <button class="btn-emg" id="k-btn-limpiar" onclick="kommoEmergencia('limpiarYCargar')">🔄 Limpiar y recargar</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Modal Reporte Kommo -->
-<div class="modal-overlay" id="modal-reporte-kommo">
-  <div class="modal-box">
-    <div class="modal-head"><h3>Reporte Cartones Kommo</h3><button class="topbar-btn" onclick="cerrarModal('modal-reporte-kommo')">✕</button></div>
-    <div id="k-reporte-contenido" style="font-size:.78rem;color:var(--txt2)"></div>
-  </div>
-</div>
+    <div class="modal-overlay" id="modal-reporte-kommo">
+      <div class="modal-box">
+        <div class="modal-head"><h3>Reporte Cartones Kommo</h3><button class="topbar-btn" onclick="cerrarModal('modal-reporte-kommo')">✕</button></div>
+        <div id="k-reporte-contenido" style="font-size:.78rem;color:var(--txt2)"></div>
+      </div>
+    </div>
 
     <div id="section-premios" style="display:none">
       <div class="panel panel-full">
@@ -302,20 +296,14 @@ body{background:var(--bg);color:var(--txt);font-family:'Plus Jakarta Sans',sans-
 </div>
 <div id="toast"></div>
 <script>
-const CFG={WEBHOOK:"https://script.google.com/macros/s/AKfycbxC-rBhCnqvu0jEOhaQGvb6q532uHuQ0l6wG2GpULj84hRymZBrMnfmAkfPKm1cAHbV/exec",CREDS:[{u:"admin",hash:"d084799d20c25e7617ae6894cf6d333f3018a68e6445cf4d9ed985e4c8e64e6d"}],AUTO_REFRESH:15};
+const CFG={WEBHOOK:"https://script.google.com/macros/s/AKfycbxC-rBhCnqvu0jEOhaQGvb6q532uHuQ0l6wG2GpULj84hRymZBrMnfmAkfPKm1cAHbV/exec",WEBHOOK_KOMMO:"https://script.google.com/macros/s/AKfycbxxSUoQ8cj4NijcvhmpC8GqQTjDbeP5qKoGb1BkBJ3-D4mZYSDb_vgAXfUceeRDydIghQ/exec",CREDS:[{u:"admin",hash:"d084799d20c25e7617ae6894cf6d333f3018a68e6445cf4d9ed985e4c8e64e6d"}],AUTO_REFRESH:15};
 let tmr=null;
-const CFG={WEBHOOK:"https://script.google.com/macros/s/AKfycbxC-rBhCnqvu0jEOhaQGvb6q532uHuQ0l6wG2GpULj84hRymZBrMnfmAkfPKm1cAHbV/exec",  // GAS 1 (ya existente)
-  WEBHOOK_KOMMO:"https://script.google.com/macros/s/AKfycbxxSUoQ8cj4NijcvhmpC8GqQTjDbeP5qKoGb1BkBJ3-D4mZYSDb_vgAXfUceeRDydIghQ/exec",  // GAS 2 (nuevo)
-  CREDS:[{u:"admin",hash:"d084799d20c25e7617ae6894cf6d333f3018a68e6445cf4d9ed985e4c8e64e6d"}],
-  AUTO_REFRESH:15
-};
 async function hashSHA256(t){const e=new TextEncoder;const b=await crypto.subtle.digest('SHA-256',e.encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 async function login(){const u=document.getElementById('u').value.trim(),p=document.getElementById('p').value,h=await hashSHA256(p);if(CFG.CREDS.find(x=>x.u===u&&x.hash===h)){sessionStorage.setItem('sv','1');document.getElementById('login-screen').style.display='none';document.getElementById('dashboard').style.display='block';cargar();cargarPremios();if(CFG.AUTO_REFRESH)tmr=setInterval(cargar,CFG.AUTO_REFRESH*1000)}else{document.getElementById('err').style.display='block'}}
 function logout(){sessionStorage.removeItem('sv');clearInterval(tmr);document.getElementById('dashboard').style.display='none';document.getElementById('login-screen').style.display='flex'}
 document.getElementById('p').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 
-function showSection(id,btn){['home','kommo','premios','emergencias'].forEach(s=>document.getElementById('section-'+s).style.display=s===id?'block':'none');document.querySelectorAll('.topbar-nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='premios') cargarPremios();if(id==='kommo') cargarKommo();
-}
+function showSection(id,btn){['home','kommo','premios','emergencias'].forEach(s=>document.getElementById('section-'+s).style.display=s===id?'block':'none');document.querySelectorAll('.topbar-nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='premios')cargarPremios();if(id==='kommo')cargarKommo()}
 
 async function cargar(){try{const r=await fetch(CFG.WEBHOOK+'?accion=listarComprobantes');const d=await r.json();if(d.comprobantes)render(d.comprobantes)}catch(e){document.getElementById('lista').innerHTML='<div class="empty-state"><div class="big">!</div><p>Sin conexión</p></div>'}cargarConversaciones();cargarStock();cargarAviso()}
 
@@ -490,25 +478,18 @@ async function toggleSorteoEspecial() {
     btn.disabled = false;
   }
 }
-  // ====================================
+
+// ====================================
 // KOMMO — FUNCIONES DEL DASHBOARD
 // ====================================
 let _kommoData = [], _kommoTab = 'Pendiente';
 
 async function cargarKommo() {
   try {
-    // Cargar comprobantes
     const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=listarComprobantes');
     const d = await r.json();
-    if (d.exito && d.comprobantes) {
-      _kommoData = d.comprobantes;
-      renderKommo(d.comprobantes);
-    }
-  } catch(e) {
-    document.getElementById('k-lista').innerHTML = '<div class="empty-state"><div class="big">!</div><p>Sin conexión con GAS 2</p></div>';
-  }
-
-  // Cargar estadísticas
+    if (d.exito && d.comprobantes) { _kommoData = d.comprobantes; renderKommo(d.comprobantes); }
+  } catch(e) { document.getElementById('k-lista').innerHTML = '<div class="empty-state"><div class="big">!</div><p>Sin conexión con GAS 2</p></div>'; }
   try {
     const r2 = await fetch(CFG.WEBHOOK_KOMMO + '?accion=getEstadisticas');
     const d2 = await r2.json();
@@ -519,21 +500,14 @@ async function cargarKommo() {
       document.getElementById('k-ing').textContent = fmtGs(d2.ingresos);
       document.getElementById('k-stock').textContent = d2.stockDisponible;
       const sub = document.getElementById('k-stock-sub');
-      if (d2.stockDisponible <= 5) {
-        document.getElementById('k-stock').style.color = 'var(--danger)';
-        sub.innerHTML = '<span class="down">⚠ Stock bajo</span>';
-      } else {
-        document.getElementById('k-stock').style.color = 'var(--txt)';
-        sub.innerHTML = '<span class="up">Stock OK</span>';
-      }
+      if (d2.stockDisponible <= 5) { document.getElementById('k-stock').style.color = 'var(--danger)'; sub.innerHTML = '<span class="down">⚠ Stock bajo</span>'; }
+      else { document.getElementById('k-stock').style.color = 'var(--txt)'; sub.innerHTML = '<span class="up">Stock OK</span>'; }
     }
   } catch(e) {}
 }
 
 function renderKommo(data) {
-  const pend = data.filter(c => c.estado === 'Pendiente');
-  const apr = data.filter(c => c.estado === 'Aprobado');
-  const rec = data.filter(c => c.estado === 'Rechazado');
+  const pend = data.filter(c => c.estado === 'Pendiente'), apr = data.filter(c => c.estado === 'Aprobado'), rec = data.filter(c => c.estado === 'Rechazado');
   document.getElementById('kbadge-pend').textContent = pend.length;
   document.getElementById('kbadge-apro').textContent = apr.length;
   document.getElementById('kbadge-rech').textContent = rec.length;
@@ -551,115 +525,46 @@ function cambiarTabKommo(e) {
 function renderListaKommo(data) {
   const f = data.filter(c => c.estado === _kommoTab);
   const l = document.getElementById('k-lista');
-  if (!f.length) {
-    const m = { Pendiente: 'Sin pendientes', Aprobado: 'Sin aprobados', Rechazado: 'Sin rechazados' };
-    l.innerHTML = '<div class="empty-state"><div class="big">✓</div><p>' + m[_kommoTab] + '</p></div>';
-    return;
-  }
-
+  if (!f.length) { const m = { Pendiente: 'Sin pendientes', Aprobado: 'Sin aprobados', Rechazado: 'Sin rechazados' }; l.innerHTML = '<div class="empty-state"><div class="big">✓</div><p>' + m[_kommoTab] + '</p></div>'; return; }
   l.innerHTML = f.map(c => {
     const ep = c.estado === 'Pendiente';
     const badge = '<span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2);margin-left:6px">Kommo</span>';
-
-    // Miniatura del comprobante
     let miniatura = '';
-    if (c.urlComprobante) {
-      miniatura = '<div style="width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--border);cursor:zoom-in" onclick="abrirImagen(\'' + c.urlComprobante + '\')">' +
-        '<img src="' + c.urlComprobante + '" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display=\'none\'">' +
-        '</div>';
-    }
-
-    // Cantidad editable para pendientes
-    const ce = ep
-      ? '<input type="number" id="kcant-' + c.id + '" value="' + (c.cantidad || 1) + '" min="1" max="100" style="width:48px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-family:inherit;font-size:.72rem;padding:3px 5px;text-align:center" onchange="modificarCantidadKommo(\'' + c.id + '\',this.value)">'
-      : '<span class="qty">' + (c.cantidad || 1) + '</span>';
-
-    // Acciones
-    const ac = ep
-      ? '<a class="btn-sm" href="' + c.urlComprobante + '" target="_blank">Ver</a>' +
-        '<button class="btn-reject" id="kr-' + c.id + '" onclick="rechazarKommo(\'' + c.id + '\')">Rechazar</button>' +
-        '<button class="btn-approve" id="kb-' + c.id + '" onclick="aprobarKommo(\'' + c.id + '\',\'' + (c.nombre || '') + '\')">Aprobar</button>'
-      : '<a class="btn-sm" href="' + c.urlComprobante + '" target="_blank">Ver</a>' +
-        '<span class="tag ' + (c.estado === 'Aprobado' ? 'approved' : 'rejected') + '">' + (c.estado === 'Aprobado' ? '✓ Aprobado' : '✗ Rechazado') + '</span>';
-
-    return '<div class="comp-card" id="kc-' + c.id + '">' +
-      miniatura +
-      '<div class="comp-info" style="' + (miniatura ? 'margin-left:10px;' : '') + 'flex:1;min-width:0">' +
-        '<div class="comp-name">' + (c.nombre || 'Sin nombre') + badge + '</div>' +
-        '<div class="comp-meta">' +
-          (c.cedula ? '<span>CI ' + c.cedula + '</span>' : '') +
-          ce + ' cartón' + ((c.cantidad || 1) > 1 ? 'es' : '') +
-          '<span>' + fh(c.fecha) + '</span>' +
-          (c.telefono ? '<span>' + c.telefono + '</span>' : '') +
-          (c.kommoLeadId ? '<span style="color:var(--muted)">Lead #' + c.kommoLeadId + '</span>' : '') +
-        '</div>' +
-      '</div>' +
-      '<div class="comp-actions">' + ac + '</div>' +
-    '</div>';
+    if (c.urlComprobante) { miniatura = '<div style="width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--border);cursor:zoom-in" onclick="abrirImagen(\'' + c.urlComprobante + '\')"><img src="' + c.urlComprobante + '" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display=\'none\'"></div>'; }
+    const ce = ep ? '<input type="number" id="kcant-' + c.id + '" value="' + (c.cantidad || 1) + '" min="1" max="100" style="width:48px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-family:inherit;font-size:.72rem;padding:3px 5px;text-align:center" onchange="modificarCantidadKommo(\'' + c.id + '\',this.value)">' : '<span class="qty">' + (c.cantidad || 1) + '</span>';
+    const ac = ep ? '<a class="btn-sm" href="' + c.urlComprobante + '" target="_blank">Ver</a><button class="btn-reject" id="kr-' + c.id + '" onclick="rechazarKommo(\'' + c.id + '\')">Rechazar</button><button class="btn-approve" id="kb-' + c.id + '" onclick="aprobarKommo(\'' + c.id + '\',\'' + (c.nombre || '').replace(/'/g, '') + '\')">Aprobar</button>' : '<a class="btn-sm" href="' + c.urlComprobante + '" target="_blank">Ver</a><span class="tag ' + (c.estado === 'Aprobado' ? 'approved' : 'rejected') + '">' + (c.estado === 'Aprobado' ? '✓ Aprobado' : '✗ Rechazado') + '</span>';
+    return '<div class="comp-card" id="kc-' + c.id + '">' + miniatura + '<div class="comp-info" style="' + (miniatura ? 'margin-left:10px;' : '') + 'flex:1;min-width:0"><div class="comp-name">' + (c.nombre || 'Sin nombre') + badge + '</div><div class="comp-meta">' + (c.cedula ? '<span>CI ' + c.cedula + '</span>' : '') + ce + ' cart\u00f3n' + ((c.cantidad || 1) > 1 ? 'es' : '') + '<span>' + fh(c.fecha) + '</span>' + (c.telefono ? '<span>' + c.telefono + '</span>' : '') + (c.kommoLeadId ? '<span style="color:var(--muted)">Lead #' + c.kommoLeadId + '</span>' : '') + '</div></div><div class="comp-actions">' + ac + '</div></div>';
   }).join('');
 }
 
 async function aprobarKommo(id, nom) {
-  const b = document.getElementById('kb-' + id);
-  b.disabled = true; b.textContent = '...';
-  try {
-    const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=aprobarComprobante&id=' + encodeURIComponent(id));
-    const d = await r.json();
-    if (d.exito) {
-      document.getElementById('kc-' + id).classList.add('done');
-      document.getElementById('kc-' + id).querySelector('.comp-actions').innerHTML = '<span class="tag approved">✓ Aprobado</span>';
-      toast('Cartón Kommo enviado a ' + (nom || 'cliente'));
-      setTimeout(cargarKommo, 1800);
-    } else {
-      b.disabled = false; b.textContent = 'Aprobar';
-      toast(d.error || 'Error', true);
-    }
-  } catch(e) { b.disabled = false; b.textContent = 'Aprobar'; toast('Error de conexión', true); }
+  const b = document.getElementById('kb-' + id); b.disabled = true; b.textContent = '...';
+  try { const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=aprobarComprobante&id=' + encodeURIComponent(id)); const d = await r.json();
+    if (d.exito) { document.getElementById('kc-' + id).classList.add('done'); document.getElementById('kc-' + id).querySelector('.comp-actions').innerHTML = '<span class="tag approved">✓ Aprobado</span>'; toast('Cartón Kommo enviado a ' + (nom || 'cliente')); setTimeout(cargarKommo, 1800); }
+    else { b.disabled = false; b.textContent = 'Aprobar'; toast(d.error || 'Error', true); }
+  } catch(e) { b.disabled = false; b.textContent = 'Aprobar'; toast('Error', true); }
 }
 
 async function rechazarKommo(id) {
-  const b = document.getElementById('kr-' + id);
-  b.disabled = true; b.textContent = '...';
-  try {
-    const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=rechazarComprobante&id=' + encodeURIComponent(id));
-    const d = await r.json();
-    if (d.exito) {
-      document.getElementById('kc-' + id).style.opacity = '.4';
-      document.getElementById('kc-' + id).querySelector('.comp-actions').innerHTML = '<span class="tag rejected">✗ Rechazado</span>';
-      toast('Rechazado', true);
-      setTimeout(cargarKommo, 1800);
-    } else { b.disabled = false; b.textContent = 'Rechazar'; toast(d.error || 'Error', true); }
+  const b = document.getElementById('kr-' + id); b.disabled = true; b.textContent = '...';
+  try { const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=rechazarComprobante&id=' + encodeURIComponent(id)); const d = await r.json();
+    if (d.exito) { document.getElementById('kc-' + id).style.opacity = '.4'; document.getElementById('kc-' + id).querySelector('.comp-actions').innerHTML = '<span class="tag rejected">✗ Rechazado</span>'; toast('Rechazado', true); setTimeout(cargarKommo, 1800); }
+    else { b.disabled = false; b.textContent = 'Rechazar'; toast(d.error || 'Error', true); }
   } catch(e) { b.disabled = false; b.textContent = 'Rechazar'; toast('Error', true); }
 }
 
 async function modificarCantidadKommo(id, c) {
-  try {
-    const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=modificarCantidad&id=' + encodeURIComponent(id) + '&cantidad=' + encodeURIComponent(c));
-    const d = await r.json();
-    if (d.exito) toast(d.mensaje); else toast(d.error || 'Error', true);
-  } catch(e) { toast('Error', true); }
+  try { const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=modificarCantidad&id=' + encodeURIComponent(id) + '&cantidad=' + encodeURIComponent(c)); const d = await r.json(); if (d.exito) toast(d.mensaje); else toast(d.error || 'Error', true); } catch(e) { toast('Error', true); }
 }
 
 async function verReporteCartonesKommo() {
   document.getElementById('modal-reporte-kommo').style.display = 'flex';
   document.getElementById('k-reporte-contenido').innerHTML = '<p>Cargando...</p>';
-  try {
-    const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=reporteCartones');
-    const d = await r.json();
+  try { const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=reporteCartones'); const d = await r.json();
     if (d.exito) {
-      let h = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem">' +
-        '<div style="background:var(--ok-lt);padding:1rem;border-radius:10px"><div style="font-family:Bebas Neue,sans-serif;font-size:2rem;color:var(--ok)">' + d.resumen.totalVendidos + '</div><div style="font-size:.68rem;color:var(--muted);font-weight:600">Vendidos</div></div>' +
-        '<div style="background:var(--gold-lt);padding:1rem;border-radius:10px"><div style="font-family:Bebas Neue,sans-serif;font-size:2rem;color:var(--gold)">' + d.resumen.totalDisponibles + '</div><div style="font-size:.68rem;color:var(--muted);font-weight:600">Disponibles</div></div></div>';
-      if (d.noVendidos.length > 0) {
-        h += '<div style="font-size:.68rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Disponibles:</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:1rem">';
-        d.noVendidos.forEach(c => { h += '<span style="background:var(--bg);border:1px solid var(--border);padding:3px 8px;font-size:.72rem;border-radius:5px">' + c.nombre.replace('.jpg','') + '</span>'; });
-        h += '</div>';
-      }
-      if (d.vendidos.length > 0) {
-        h += '<div style="font-size:.68rem;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Vendidos:</div><div style="display:flex;flex-wrap:wrap;gap:4px">';
-        d.vendidos.forEach(c => { h += '<span style="background:var(--ok-lt);border:1px solid rgba(22,163,74,.2);padding:3px 8px;font-size:.72rem;border-radius:5px;color:var(--ok)">' + c.nombre.replace('.jpg','') + '</span>'; });
-        h += '</div>';
-      }
+      let h = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem"><div style="background:var(--ok-lt);padding:1rem;border-radius:10px"><div style="font-family:Bebas Neue,sans-serif;font-size:2rem;color:var(--ok)">' + d.resumen.totalVendidos + '</div><div style="font-size:.68rem;color:var(--muted);font-weight:600">Vendidos</div></div><div style="background:var(--gold-lt);padding:1rem;border-radius:10px"><div style="font-family:Bebas Neue,sans-serif;font-size:2rem;color:var(--gold)">' + d.resumen.totalDisponibles + '</div><div style="font-size:.68rem;color:var(--muted);font-weight:600">Disponibles</div></div></div>';
+      if (d.noVendidos.length > 0) { h += '<div style="font-size:.68rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Disponibles:</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:1rem">'; d.noVendidos.forEach(c => { h += '<span style="background:var(--bg);border:1px solid var(--border);padding:3px 8px;font-size:.72rem;border-radius:5px">' + c.nombre.replace('.jpg','') + '</span>'; }); h += '</div>'; }
+      if (d.vendidos.length > 0) { h += '<div style="font-size:.68rem;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Vendidos:</div><div style="display:flex;flex-wrap:wrap;gap:4px">'; d.vendidos.forEach(c => { h += '<span style="background:var(--ok-lt);border:1px solid rgba(22,163,74,.2);padding:3px 8px;font-size:.72rem;border-radius:5px;color:var(--ok)">' + c.nombre.replace('.jpg','') + '</span>'; }); h += '</div>'; }
       document.getElementById('k-reporte-contenido').innerHTML = h;
     }
   } catch(e) { document.getElementById('k-reporte-contenido').innerHTML = '<p>Error de conexión</p>'; }
@@ -667,18 +572,12 @@ async function verReporteCartonesKommo() {
 
 async function kommoEmergencia(ac) {
   const bid = ac === 'cargarCartones' ? 'k-btn-cargar' : 'k-btn-limpiar';
-  const b = document.getElementById(bid);
-  const t = b.textContent;
+  const b = document.getElementById(bid); const t = b.textContent;
   b.disabled = true; b.textContent = '⏳ Procesando...';
-  try {
-    const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=' + ac);
-    const d = await r.json();
-    if (d.exito) { toast(d.mensaje || 'Éxito ✅'); setTimeout(cargarKommo, 1500); }
-    else toast(d.error || 'Error', true);
-  } catch(e) { toast('Error', true); }
-  finally { b.disabled = false; b.textContent = t; }
+  try { const r = await fetch(CFG.WEBHOOK_KOMMO + '?accion=' + ac); const d = await r.json();
+    if (d.exito) { toast(d.mensaje || 'Éxito ✅'); setTimeout(cargarKommo, 1500); } else toast(d.error || 'Error', true);
+  } catch(e) { toast('Error', true); } finally { b.disabled = false; b.textContent = t; }
 }
-
 </script>
 </body>
 </html>
