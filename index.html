@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Salvatore · Dashboard</title>
+<title>Salvatore · Panel de Control</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Bebas+Neue&display=swap');
 :root{--bg:#f5f5f0;--surface:#fff;--surface-alt:#fafaf7;--border:#e8e8e0;--border-lt:#f0f0ea;--red:#D41B1B;--red-dk:#a01414;--red-lt:#fef2f2;--gold:#c9a000;--gold-lt:#fefce8;--txt:#1a1a1a;--txt2:#6b6b60;--muted:#9b9b90;--ok:#16a34a;--ok-lt:#f0fdf4;--danger:#dc2626;--danger-lt:#fef2f2;--warn:#d97706;--warn-lt:#fffbeb;--sh-sm:0 1px 2px rgba(0,0,0,.04);--sh-md:0 4px 12px rgba(0,0,0,.06);--sh-lg:0 8px 24px rgba(0,0,0,.08);--r:14px;--rs:10px}
@@ -286,7 +286,36 @@ _prevPendCount=pend.length;document.getElementById('sp').textContent=pend.length
 function cambiarTab(e){_tabActiva=e;document.querySelectorAll('.tabs-row .tab-btn').forEach(b=>b.classList.remove('active'));const m={Pendiente:'pend',Aprobado:'apro',Rechazado:'rech'};document.getElementById('tab-'+m[e]).classList.add('active');renderLista(_todosData)}
 
 function renderLista(data){const f=data.filter(c=>c.estado===_tabActiva);const l=document.getElementById('lista');if(!f.length){const m={Pendiente:'Todo al día — sin pendientes',Aprobado:'Sin aprobados aún',Rechazado:'Sin rechazados'};l.innerHTML='<div class="empty-state"><div class="big">✓</div><p>'+m[_tabActiva]+'</p></div>';return}
-l.innerHTML=f.map(c=>{const ep=c.estado==='Pendiente';const ce=ep?'<input type="number" id="cant-'+c.id+'" value="'+(c.cantidad||1)+'" min="1" max="100" style="width:48px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-family:inherit;font-size:.72rem;padding:3px 5px;text-align:center" onchange="modificarCantidad(\''+c.id+'\',this.value)">':'<span class="qty">'+(c.cantidad||1)+'</span>';const ac=ep?'<a class="btn-sm" href="'+c.urlComprobante+'" target="_blank">Ver</a><button class="btn-reject" id="r-'+c.id+'" onclick="rechazar(\''+c.cedula+'\',\''+c.id+'\',\''+c.nombre+'\')">Rechazar</button><button class="btn-approve" id="b-'+c.id+'" onclick="aprobar(\''+c.cedula+'\',\''+c.id+'\',\''+c.nombre+'\')">Aprobar</button>':'<a class="btn-sm" href="'+c.urlComprobante+'" target="_blank">Ver</a><span class="tag '+(c.estado==='Aprobado'?'approved':'rejected')+'">'+(c.estado==='Aprobado'?'✓ Aprobado':'✗ Rechazado')+'</span>';return'<div class="comp-card" id="c-'+c.id+'"><div class="comp-info"><div class="comp-name">'+(c.nombre||'Sin nombre')+'</div><div class="comp-meta"><span>CI '+c.cedula+'</span>'+ce+' cartón'+((c.cantidad>1)?'es':'')+'<span>'+fh(c.fecha)+'</span><span>'+(c.telefono||'')+'</span></div></div><div class="comp-actions">'+ac+'</div></div>'}).join('')}
+l.innerHTML=f.map(c=>{const ep=c.estado==='Pendiente';const ce=ep?'<input type="number" id="cant-'+c.id+'" value="'+(c.cantidad||1)+'" min="1" max="100" style="width:48px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-family:inherit;font-size:.72rem;padding:3px 5px;text-align:center" onchange="modificarCantidad(\''+c.id+'\',this.value)">':'<span class="qty">'+(c.cantidad||1)+'</span>';const ac=ep?'<a class="btn-sm" href="'+c.urlComprobante+'" target="_blank">Ver</a><button class="btn-reject" id="r-'+c.id+'" onclick="rechazar(\''+c.cedula+'\',\''+c.id+'\',\''+c.nombre+'\')">Rechazar</button><button class="btn-approve" id="b-'+c.id+'" onclick="aprobar(\''+c.cedula+'\',\''+c.id+'\',\''+c.nombre+'\')">Aprobar</button>':'<a class="btn-sm" href="'+c.urlComprobante+'" target="_blank">Ver</a><span class="tag '+(c.estado==='Aprobado'?'approved':'rejected')+'">'+(c.estado==='Aprobado'?'✓ Aprobado':'✗ Rechazado')+'</span>';var imgUrl = driveUrlDirecta(c.urlComprobante || '');
+  var miniatura = imgUrl
+    ? '<div style="width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0;border:1px solid var(--border);cursor:zoom-in" onclick="abrirImagen(\'' + imgUrl + '\')">' +
+      '<img src="' + imgUrl + '" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display=\'none\'">' +
+      '</div>'
+    : '';
+
+  var canal = c.canal || 'SendPulse';
+  var badgeCanal = canal === 'Kommo'
+    ? '<span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8f4fd;color:#1a73e8;border:1px solid rgba(26,115,232,.2);margin-left:6px">Kommo</span>'
+    : '<span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#f0fdf4;color:#16a34a;border:1px solid rgba(22,163,74,.2);margin-left:6px">SP</span>';
+
+  var spUrl = c.spContactId
+    ? 'https://login.sendpulse.com/chatbots/chats?channel=whatsapp&contact_id=' + c.spContactId
+    : 'https://login.sendpulse.com/chatbots/chats?channel=whatsapp&search=' + (c.telefono || '');
+
+  var nombreLink = '<a href="' + spUrl + '" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--border)" title="Abrir chat en SendPulse">' + (c.nombre || 'Sin nombre') + '</a>';
+
+  var cantidadDisplay = c.estado === 'Aprobado'
+    ? '<span style="background:var(--ok-lt);color:var(--ok);font-weight:700;padding:2px 8px;border-radius:5px;font-size:.72rem">🎟️ ' + c.cantidad + ' cart\u00f3n' + (c.cantidad > 1 ? 'es' : '') + '</span>'
+    : ce + ' cart\u00f3n' + (c.cantidad > 1 ? 'es' : '');
+
+  return '<div class="comp-card" id="c-' + c.id + '">' +
+    miniatura +
+    '<div class="comp-info" style="' + (imgUrl ? 'margin-left:10px;' : '') + 'flex:1;min-width:0">' +
+      '<div class="comp-name">' + nombreLink + badgeCanal + '</div>' +
+      '<div class="comp-meta"><span>CI ' + c.cedula + '</span>' + cantidadDisplay + '<span>' + fh(c.fecha) + '</span><span>' + (c.telefono || '') + '</span></div>' +
+    '</div>' +
+    '<div class="comp-actions">' + ac + '</div>' +
+  '</div>'}).join('')}
 
 async function aprobar(ced,id,nom){const b=document.getElementById('b-'+id);b.disabled=true;b.textContent='...';try{const r=await fetch(CFG.WEBHOOK+'?accion=aprobarComprobante&cedula='+encodeURIComponent(ced));const d=await r.json();if(d.exito){document.getElementById('c-'+id).classList.add('done');document.getElementById('c-'+id).querySelector('.comp-actions').innerHTML='<span class="tag approved">✓ Aprobado</span>';toast('Cartón enviado a '+nom);setTimeout(cargar,1800)}else{b.disabled=false;b.textContent='Aprobar';toast(d.error||'Error',true)}}catch(e){b.disabled=false;b.textContent='Aprobar';toast('Error',true)}}
 
@@ -323,6 +352,37 @@ function abrirChat(t,n){_chatTelefono=t;document.getElementById('chat-target').t
 async function enviarChat(){const i=document.getElementById('chat-input');const m=i.value.trim();if(!m||!_chatTelefono)return;i.value='';i.disabled=true;try{const r=await fetch(CFG.WEBHOOK+'?accion=enviarMensajeHumano&telefono='+encodeURIComponent(_chatTelefono)+'&mensaje='+encodeURIComponent(m));const d=await r.json();if(d.exito)toast('Enviado ✓');else toast(d.error||'Error',true)}catch(e){toast('Error',true)}i.disabled=false;i.focus()}
 async function enviarCombos(t){if(!confirm('¿Enviar combos de cartones?'))return;try{const r=await fetch(CFG.WEBHOOK+'?accion=enviarCombos&telefono='+encodeURIComponent(t));const d=await r.json();if(d.exito){toast(d.mensaje||'Combos enviados ✅');setTimeout(cargarConversaciones,800)}else toast(d.error||'Error',true)}catch(e){toast('Error de conexión',true)}}
 async function asignarCartones(t){const c=prompt('¿Cuántos cartones?','1');if(!c)return;try{const r=await fetch(CFG.WEBHOOK+'?accion=asignarCartones&telefono='+encodeURIComponent(t)+'&cantidad='+encodeURIComponent(c));const d=await r.json();if(d.exito){toast(d.mensaje);cargarConversaciones()}else toast(d.error||'Error',true)}catch(e){toast('Error',true)}}
+
+// Convierte URL de Google Drive al formato embebible directamente en <img>
+function driveUrlDirecta(url) {
+  if (!url) return '';
+  var match = url.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+  if (match) return 'https://drive.google.com/uc?export=view&id=' + match[1];
+  if (url.indexOf('uc?') !== -1) return url;
+  return url;
+}
+
+// Abre la imagen del comprobante en un modal de pantalla completa
+function abrirImagen(url) {
+  var ov = document.getElementById('modal-img-ov');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'modal-img-ov';
+    ov.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);z-index:500;display:flex;align-items:center;justify-content:center;cursor:zoom-out;flex-direction:column;gap:12px';
+    ov.onclick = function(ev) { if (ev.target === ov || ev.target.tagName === 'IMG') ov.style.display = 'none'; };
+    var img = document.createElement('img');
+    img.id = 'modal-img-src';
+    img.style.cssText = 'max-width:90vw;max-height:85vh;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,.7)';
+    var hint = document.createElement('div');
+    hint.style.cssText = 'color:rgba(255,255,255,.4);font-size:.7rem;font-family:inherit';
+    hint.textContent = 'Clic para cerrar';
+    ov.appendChild(img);
+    ov.appendChild(hint);
+    document.body.appendChild(ov);
+  }
+  document.getElementById('modal-img-src').src = url;
+  ov.style.display = 'flex';
+}
 
 function fh(f){if(!f)return'—';return new Date(f).toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}
 function toast(m,e){const t=document.getElementById('toast');t.textContent=m;t.className='show'+(e?' err':'');setTimeout(()=>t.className='',3000)}
