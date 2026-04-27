@@ -328,6 +328,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Plus Jakarta Sans',sans-
         <div class="panel-body">
           <div class="emg-grid">
             <button class="btn-emg" id="e-btn-cargar" onclick="cargarCartonesEsp()">📥 Cargar cartones desde Drive</button>
+            <button class="btn-emg" id="e-btn-reset" onclick="resetEstadisticasEsp()" style="border-color:rgba(220,38,38,.3);color:var(--danger)">🔄 Reset estadísticas</button>
           </div>
         </div>
       </div>
@@ -771,7 +772,7 @@ function renderConvEspecial(convs) {
   const bq = (document.getElementById('econv-search')?.value || '').toLowerCase().trim();
   if (bq) fi = fi.filter(c => (c.nombre || '').toLowerCase().includes(bq) || (c.telefono || '').includes(bq) || (c.etapa || '').toLowerCase().includes(bq) || (c.ultimoMensaje || '').toLowerCase().includes(bq));
   if (!fi.length) { l.innerHTML = '<div class="empty-state"><p>Sin resultados</p></div>'; return; }
-  const el = { inicial: ['Nuevo', 'init'], esperando_cantidad: ['Elige cantidad', 'wait'], esperando_metodo_pago: ['Elige pago', 'wait'], esperando_comprobante: ['Espera comprobante', 'wait'], esperando_datos_personales: ['Espera datos', 'wait'], verificando_pago: ['Verificando', 'wait'], carton_entregado: ['Entregado \u2713', 'ok'] };
+  const el = { inicial: ['Nuevo', 'init'], esperando_cantidad: ['Elige cantidad', 'wait'], esperando_metodo_pago: ['Elige pago', 'wait'], esperando_comprobante: ['Espera comprobante', 'wait'], esperando_nombre: ['Espera nombre', 'wait'], esperando_cedula_post_pago: ['Espera c\u00e9dula', 'wait'], verificando_pago: ['Verificando', 'wait'], carton_entregado: ['Entregado \u2713', 'ok'] };
   l.innerHTML = fi.map(c => {
     const [lb, cls] = el[c.etapa] || [c.etapa, 'init'];
     const hr = c.fecha ? new Date(c.fecha).toLocaleTimeString('es-PY', { hour: '2-digit', minute: '2-digit' }) : '\u2014';
@@ -787,6 +788,16 @@ async function cargarCartonesEsp() {
   b.disabled = true; b.textContent = '\u23f3 Cargando...';
   try { const r = await fetch(CFG.WEBHOOK + '?accion=cargarCartonesEspecial'); const d = await r.json();
     if (d.exito) { toast(d.mensaje || '\u00c9xito \u2705'); setTimeout(cargarEspecial, 1500); }
+    else toast(d.error || 'Error', true);
+  } catch(e) { toast('Error', true); } finally { b.disabled = false; b.textContent = t; }
+}
+
+async function resetEstadisticasEsp() {
+  if (!confirm('\u00bfResetear estad\u00edsticas de SalvaEspecial?\nEsto marca todos los comprobantes actuales como de un ciclo anterior.')) return;
+  const b = document.getElementById('e-btn-reset'); const t = b.textContent;
+  b.disabled = true; b.textContent = '\u23f3 Procesando...';
+  try { const r = await fetch(CFG.WEBHOOK + '?accion=resetEstadisticasEspecial'); const d = await r.json();
+    if (d.exito) { toast(d.mensaje || 'Reset exitoso \u2705'); setTimeout(cargarEspecial, 1500); }
     else toast(d.error || 'Error', true);
   } catch(e) { toast('Error', true); } finally { b.disabled = false; b.textContent = t; }
 }
