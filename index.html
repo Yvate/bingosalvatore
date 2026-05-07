@@ -107,7 +107,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Plus Jakarta Sans',sans-
 .chat-bar button{background:var(--red);color:#fff;border:none;border-radius:8px;padding:.55rem .9rem;cursor:pointer;font-weight:700;font-size:.85rem}
 #toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--txt);color:#fff;font-size:.78rem;font-family:inherit;font-weight:600;padding:.7rem 1.2rem;border-radius:var(--rs);transform:translateY(60px);opacity:0;transition:.25s;z-index:300;pointer-events:none;box-shadow:var(--sh-lg)}
 #toast.show{transform:translateY(0);opacity:1}#toast.err{background:var(--danger)}
-@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}.topbar-nav{display:none}}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}.topbar-nav{display:flex;gap:.15rem;overflow-x:auto}.topbar-nav button{font-size:.7rem;padding:.35rem .6rem;white-space:nowrap}.topbar-right{gap:.4rem}.topbar-right .topbar-btn:not(:first-child){display:none}}
 @media(max-width:580px){.main{padding:1rem}.stat-grid{grid-template-columns:1fr}.topbar{padding:0 1rem}}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
 @keyframes resplandor-oro {
@@ -290,12 +290,31 @@ body{background:var(--bg);color:var(--txt);font-family:'Plus Jakarta Sans',sans-
 
     <!-- ═══════ SALVAESPECIAL ═══════ -->
     <div id="section-especial" style="display:none">
-      <div class="stat-grid">
+      <div class="stat-grid" style="grid-template-columns:repeat(6,1fr)">
         <div class="stat-card"><div class="stat-icon orange">⏳</div><div class="stat-label">Pendientes <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#fff3e0;color:#e65100;border:1px solid rgba(230,81,0,.2)">Especial</span></div><div class="stat-value" id="e-pend">—</div></div>
         <div class="stat-card"><div class="stat-icon green">✅</div><div class="stat-label">Aprobados <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#fff3e0;color:#e65100;border:1px solid rgba(230,81,0,.2)">Especial</span></div><div class="stat-value" id="e-apr">—</div></div>
         <div class="stat-card"><div class="stat-icon red">🎟️</div><div class="stat-label">Cartones vendidos <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#fff3e0;color:#e65100;border:1px solid rgba(230,81,0,.2)">Especial</span></div><div class="stat-value" id="e-carts">—</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#e8f5e9">🎁</div><div class="stat-label">Gentilezas <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#fff3e0;color:#e65100;border:1px solid rgba(230,81,0,.2)">Especial</span></div><div class="stat-value" id="e-gent">0</div></div>
         <div class="stat-card"><div class="stat-icon gold">💰</div><div class="stat-label">Ingresos <span style="font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:5px;background:#fff3e0;color:#e65100;border:1px solid rgba(230,81,0,.2)">Especial</span></div><div class="stat-value money" id="e-ing">—</div></div>
         <div class="stat-card"><div class="stat-icon blue">📦</div><div class="stat-label">Stock Especial</div><div class="stat-value" id="e-stock">—</div><div class="stat-sub" id="e-stock-sub"></div></div>
+      </div>
+
+      <!-- BARRA DE OBJETIVO -->
+      <div class="panel panel-full" style="margin-bottom:1.5rem;padding:1.25rem 1.5rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+          <div style="font-size:.78rem;font-weight:700">🎯 Objetivo Sorteo Especial</div>
+          <div style="font-size:.68rem;color:var(--muted)">Fecha límite: <strong>10 de mayo 2026</strong></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:4px"><span>Cartones: <strong id="obj-carts-actual">0</strong> / 5.000</span><span id="obj-carts-pct">0%</span></div>
+            <div style="background:var(--bg);border-radius:8px;height:12px;overflow:hidden;border:1px solid var(--border)"><div id="obj-carts-bar" style="height:100%;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:8px;transition:width .6s ease;width:0%"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-bottom:4px"><span>Ingresos: <strong id="obj-ing-actual">Gs. 0</strong> / Gs. 100.000.000</span><span id="obj-ing-pct">0%</span></div>
+            <div style="background:var(--bg);border-radius:8px;height:12px;overflow:hidden;border:1px solid var(--border)"><div id="obj-ing-bar" style="height:100%;background:linear-gradient(90deg,var(--ok),#2dd4bf);border-radius:8px;transition:width .6s ease;width:0%"></div></div>
+          </div>
+        </div>
       </div>
       <div class="stat-grid" style="grid-template-columns:1fr 1fr;margin-bottom:1.5rem">
         <div class="stat-card"><div class="stat-icon green">📊</div><div class="stat-label">Tasa de conversión Especial</div><div class="stat-value" id="e-conv">—</div><div class="stat-sub" id="e-conv-sub"></div></div>
@@ -359,7 +378,7 @@ async function login(){const u=document.getElementById('u').value.trim(),p=docum
 function logout(){sessionStorage.removeItem('sv');clearInterval(tmr);document.getElementById('dashboard').style.display='none';document.getElementById('login-screen').style.display='flex'}
 document.getElementById('p').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 
-function showSection(id,btn){['home','kommo','especial'].forEach(s=>document.getElementById('section-'+s).style.display=s===id?'block':'none');document.querySelectorAll('.topbar-nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='home'){cargar();cargarPremios()}if(id==='kommo')cargarKommo();if(id==='especial')cargarEspecial()}
+function showSection(id,btn){['home','kommo','especial'].forEach(s=>document.getElementById('section-'+s).style.display=s===id?'block':'none');document.querySelectorAll('.topbar-nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id!=='especial'&&_espAutoRefresh){clearInterval(_espAutoRefresh);_espAutoRefresh=null}if(id==='home'){cargar();cargarPremios()}if(id==='kommo')cargarKommo();if(id==='especial')cargarEspecial()}
 
 async function cargar(){try{const r=await fetch(CFG.WEBHOOK+'?accion=listarComprobantes');const d=await r.json();if(d.comprobantes)render(d.comprobantes)}catch(e){document.getElementById('lista').innerHTML='<div class="empty-state"><div class="big">!</div><p>Sin conexión</p></div>'}cargarConversaciones();cargarStock();cargarAviso()}
 
@@ -658,6 +677,7 @@ async function cargarEspecial() {
   } catch(e) { document.getElementById('e-lista').innerHTML = '<div class="empty-state"><div class="big">!</div><p>Sin conexión</p></div>'; }
   cargarStockEspecial();
   cargarConversacionesEspecial();
+  iniciarAutoRefreshEspecial();
 }
 
 function renderEspecial(data) {
@@ -665,15 +685,27 @@ function renderEspecial(data) {
   const apr = data.filter(c => c.estado === 'Aprobado');
   const rec = data.filter(c => c.estado === 'Rechazado');
   const carts = apr.reduce((s, c) => s + (parseInt(c.cantidad) || 1), 0);
-  const ingresos = carts * 20000;
+  const gent = apr.reduce((s, c) => s + (parseInt(c.gentileza) || 0), 0);
+  const ingresos = carts * 20000; // Solo pagados, sin gentilezas
+  const totalCartones = carts + gent;
   document.getElementById('e-pend').textContent = pend.length;
   document.getElementById('e-apr').textContent = apr.length;
   document.getElementById('e-carts').textContent = carts;
+  document.getElementById('e-gent').textContent = gent;
   document.getElementById('e-ing').textContent = fmtGs(ingresos);
   document.getElementById('ebadge-pend').textContent = pend.length;
   document.getElementById('ebadge-apro').textContent = apr.length;
   document.getElementById('ebadge-rech').textContent = rec.length;
   updateNavBadge('especial', pend.length);
+  // Barras de objetivo
+  var pctCarts = Math.min(100, Math.round((totalCartones / 5000) * 100));
+  var pctIng = Math.min(100, Math.round((ingresos / 100000000) * 100));
+  document.getElementById('obj-carts-actual').textContent = totalCartones;
+  document.getElementById('obj-carts-pct').textContent = pctCarts + '%';
+  document.getElementById('obj-carts-bar').style.width = pctCarts + '%';
+  document.getElementById('obj-ing-actual').textContent = fmtGs(ingresos);
+  document.getElementById('obj-ing-pct').textContent = pctIng + '%';
+  document.getElementById('obj-ing-bar').style.width = pctIng + '%';
   renderListaEspecial(data);
 }
 
@@ -700,19 +732,44 @@ function renderListaEspecial(data) {
     var spUrl = c.spContactId ? 'https://login.sendpulse.com/chatbots/chats?channel=whatsapp&contact_id=' + c.spContactId : 'https://login.sendpulse.com/chatbots/chats?channel=whatsapp&search=' + (c.telefono || '');
     var nombreLink = '<a href="' + spUrl + '" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--border)" title="Abrir chat en SendPulse">' + (c.nombre || 'Sin nombre') + '</a>';
     const ce = ep ? '<input type="number" id="ecant-' + c.id + '" value="' + (c.cantidad || 1) + '" min="1" max="100" style="width:48px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-family:inherit;font-size:.72rem;padding:3px 5px;text-align:center" onchange="modificarCantidadEsp(\'' + c.id + '\',this.value)">' : '<span class="qty">' + (c.cantidad || 1) + '</span>';
-    const cantDisplay = c.estado === 'Aprobado' ? '<span style="background:var(--ok-lt);color:var(--ok);font-weight:700;padding:2px 8px;border-radius:5px;font-size:.72rem">\ud83c\udfab ' + c.cantidad + ' cart\u00f3n' + (c.cantidad > 1 ? 'es' : '') + '</span>' : ce + ' cart\u00f3n' + ((c.cantidad || 1) > 1 ? 'es' : '');
-    const ac = ep ? '<a class="btn-sm" href="' + (c.urlComprobante || '#') + '" target="_blank">Ver</a><button class="btn-reject" id="er-' + c.id + '" onclick="rechazarEsp(\'' + c.id + '\')">Rechazar</button><button class="btn-approve" id="eb-' + c.id + '" onclick="aprobarEsp(\'' + (c.cedula || '') + '\',\'' + c.id + '\',\'' + (c.nombre || '').replace(/'/g, '') + '\')">Aprobar</button>' : '<a class="btn-sm" href="' + (c.urlComprobante || '#') + '" target="_blank">Ver</a><span class="tag ' + (c.estado === 'Aprobado' ? 'approved' : 'rejected') + '">' + (c.estado === 'Aprobado' ? '\u2713 Aprobado' : '\u2717 Rechazado') + '</span>';
-    return '<div class="comp-card" id="ec-' + c.id + '">' + miniatura + '<div class="comp-info" style="' + (miniatura ? 'margin-left:10px;' : '') + 'flex:1;min-width:0"><div class="comp-name">' + nombreLink + badge + '</div><div class="comp-meta">' + (c.cedula && c.cedula !== 'pendiente' ? '<span>CI ' + c.cedula + '</span>' : '<span style="color:var(--warn)">CI pendiente</span>') + cantDisplay + '<span>' + fh(c.fecha) + '</span>' + (c.telefono ? '<span>' + c.telefono + '</span>' : '') + '</div></div><div class="comp-actions">' + ac + '</div></div>';
+    const cantDisplay = c.estado === 'Aprobado' ? '<span style="background:var(--ok-lt);color:var(--ok);font-weight:700;padding:2px 8px;border-radius:5px;font-size:.72rem">\ud83c\udfab ' + c.cantidad + ' cart\u00f3n' + (c.cantidad > 1 ? 'es' : '') + '</span>' + (c.gentileza > 0 ? '<span style="background:#e8f5e9;color:#2e7d32;font-weight:700;padding:2px 8px;border-radius:5px;font-size:.72rem;margin-left:4px">\ud83c\udf81 +' + c.gentileza + '</span>' : '') : ce + ' cart\u00f3n' + ((c.cantidad || 1) > 1 ? 'es' : '');
+    // Gentileza selector (only for pending)
+    const gentSelector = ep ? '<div style="display:flex;align-items:center;gap:4px;margin-left:6px"><button class="btn-sm" style="background:#e8f5e9;color:#2e7d32;border-color:rgba(46,125,50,.3);font-weight:700" id="eg-' + c.id + '" onclick="aprobarConGentileza(\'' + c.id + '\',\'' + (c.nombre || '').replace(/'/g, '') + '\')">Gentileza</button><input type="number" id="egcant-' + c.id + '" value="2" min="1" max="50" style="width:40px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:#2e7d32;font-family:inherit;font-size:.72rem;padding:3px 4px;text-align:center"></div>' : '';
+    const ac = ep ? '<a class="btn-sm" href="' + (c.urlComprobante || '#') + '" target="_blank">Ver</a><button class="btn-reject" id="er-' + c.id + '" onclick="rechazarEsp(\'' + c.id + '\')">Rechazar</button><button class="btn-approve" id="eb-' + c.id + '" onclick="aprobarEsp(\'' + c.id + '\',\'' + (c.nombre || '').replace(/'/g, '') + '\')">Aprobar</button>' + gentSelector : '<a class="btn-sm" href="' + (c.urlComprobante || '#') + '" target="_blank">Ver</a><span class="tag ' + (c.estado === 'Aprobado' ? 'approved' : 'rejected') + '">' + (c.estado === 'Aprobado' ? '\u2713 Aprobado' : '\u2717 Rechazado') + '</span>';
+    return '<div class="comp-card" id="ec-' + c.id + '">' + miniatura + '<div class="comp-info" style="' + (miniatura ? 'margin-left:10px;' : '') + 'flex:1;min-width:0"><div class="comp-name">' + nombreLink + badge + '</div><div class="comp-meta">' + (c.cedula && c.cedula !== 'pendiente' ? '<span>CI ' + c.cedula + '</span>' : '<span style="color:var(--warn)">CI pendiente</span>') + cantDisplay + '<span>' + fh(c.fecha) + '</span>' + (c.telefono ? '<span>' + c.telefono + '</span>' : '') + '</div></div><div class="comp-actions" style="flex-wrap:wrap;gap:4px">' + ac + '</div></div>';
   }).join('');
 }
 
-async function aprobarEsp(ced, id, nom) {
-  if (!ced || ced === 'pendiente') { toast('Este comprobante no tiene c\u00e9dula asignada a\u00fan', true); return; }
+async function aprobarEsp(id, nom) {
   const b = document.getElementById('eb-' + id); b.disabled = true; b.textContent = '...';
-  try { const r = await fetch(CFG.WEBHOOK + '?accion=aprobarComprobanteEspecial&cedula=' + encodeURIComponent(ced)); const d = await r.json();
-    if (d.exito) { document.getElementById('ec-' + id).classList.add('done'); document.getElementById('ec-' + id).querySelector('.comp-actions').innerHTML = '<span class="tag approved">\u2713 Aprobado</span>'; toast('Cart\u00f3n especial enviado a ' + (nom || 'cliente')); setTimeout(cargarEspecial, 1800); }
+  try { const r = await fetch(CFG.WEBHOOK + '?accion=aprobarComprobanteEspecial&id=' + encodeURIComponent(id) + '&gentileza=0'); const d = await r.json();
+    if (d.exito) { document.getElementById('ec-' + id).classList.add('done'); document.getElementById('ec-' + id).querySelector('.comp-actions').innerHTML = '<span class="tag approved">\u2713 Aprobado</span>'; toast('Cartón especial enviado a ' + (nom || 'cliente')); setTimeout(cargarEspecial, 1800); }
     else { b.disabled = false; b.textContent = 'Aprobar'; toast(d.error || 'Error', true); }
   } catch(e) { b.disabled = false; b.textContent = 'Aprobar'; toast('Error', true); }
+}
+
+async function aprobarConGentileza(id, nom) {
+  const gentInput = document.getElementById('egcant-' + id);
+  const gentCant = parseInt(gentInput ? gentInput.value : 2) || 2;
+  if (!confirm('¿Aprobar + ' + gentCant + ' cartón(es) de gentileza?')) return;
+  const b = document.getElementById('eg-' + id); b.disabled = true; b.textContent = '...';
+  try { const r = await fetch(CFG.WEBHOOK + '?accion=aprobarComprobanteEspecial&id=' + encodeURIComponent(id) + '&gentileza=' + gentCant); const d = await r.json();
+    if (d.exito) { document.getElementById('ec-' + id).classList.add('done'); document.getElementById('ec-' + id).querySelector('.comp-actions').innerHTML = '<span class="tag approved">\u2713 Aprobado + \ud83c\udf81' + gentCant + '</span>'; toast('Enviado ' + d.totalCartones + ' cartones (' + gentCant + ' gentileza) a ' + (nom || 'cliente')); setTimeout(cargarEspecial, 1800); }
+    else { b.disabled = false; b.textContent = 'Gentileza'; toast(d.error || 'Error', true); }
+  } catch(e) { b.disabled = false; b.textContent = 'Gentileza'; toast('Error', true); }
+}
+
+// Auto-refresh comprobantes pendientes especial cada 20 segundos
+var _espAutoRefresh = null;
+function iniciarAutoRefreshEspecial() {
+  if (_espAutoRefresh) clearInterval(_espAutoRefresh);
+  _espAutoRefresh = setInterval(async function() {
+    try {
+      const r = await fetch(CFG.WEBHOOK + '?accion=listarComprobantesEspecial');
+      const d = await r.json();
+      if (d.comprobantes) { _espData = d.comprobantes; renderEspecial(d.comprobantes); }
+    } catch(e) {}
+  }, 20000);
 }
 
 async function rechazarEsp(id) {
